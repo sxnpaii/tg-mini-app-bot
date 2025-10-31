@@ -30,4 +30,6 @@ bot.on(":web_app_data", (ctx) => {
 });
 
 // start
-bot.start();
+// bot.start();
+
+export { bot };
