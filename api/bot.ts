@@ -1,10 +1,42 @@
-import { Bot, InlineKeyboard, Keyboard, webhookCallback } from "grammy";
-import { commands } from "./commands";
+import {
+  Bot,
+  Composer,
+  InlineKeyboard,
+  Keyboard,
+  webhookCallback,
+} from "grammy";
 // ! ALWAYS CHECKOUT BEFORE DEPLOY
 const botToken = process.env.BOT_TOKEN_PROD || "";
 const botUrl = process.env.BOT_URL_PROD || "";
 
 const bot = new Bot(botToken);
+
+const miniAppUrl = process.env.WEB_APP_PROD || "";
+
+const commands = new Composer();
+
+commands.command("start", async (ctx) => {
+  await ctx.reply(
+    `Welcome to the HaulerHub bot!\n
+To use bot, you need to launch Mini App
+    `,
+    {
+      reply_parameters: { message_id: ctx.msgId },
+
+      reply_markup: new InlineKeyboard().webApp("Open App", miniAppUrl),
+    }
+  );
+});
+
+commands.command(`showtrip`, async (ctx) => {
+  await ctx.reply("You can open app by pressing 'Show Trip' button", {
+    reply_parameters: { message_id: ctx.msgId },
+    reply_markup: new Keyboard().webApp(
+      `Show Trip`,
+      `${miniAppUrl}/driver/current_trip`
+    ),
+  });
+});
 
 bot.on(":location", async (ctx) => {
   const loc = ctx.message?.location;
@@ -42,4 +74,4 @@ bot.use(commands);
 bot.api.setWebhook(botUrl);
 export default webhookCallback(bot, "https");
 
-export { bot };
+// export { bot };
